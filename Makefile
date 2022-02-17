@@ -12,3 +12,7 @@ test:
 	poetry run pytest
 
 check: test lint
+
+coverage:
+	poetry run coverage run -m pytest -v
+	poetry run coverage xml
