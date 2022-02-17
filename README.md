@@ -7,3 +7,7 @@
 Work example
 
 [![asciicast](https://asciinema.org/a/mKOiuFvtmasbKy4XR2VtXzUlk.svg)](https://asciinema.org/a/mKOiuFvtmasbKy4XR2VtXzUlk)
+
+Logging example
+
+[![asciicast](https://asciinema.org/a/mpD426YPNQpi7lrMef6jL4hzC.svg)](https://asciinema.org/a/mpD426YPNQpi7lrMef6jL4hzC)
