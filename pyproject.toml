@@ -18,6 +18,7 @@ requests-mock = "^1.9.3"
 progress = "^1.6"
 colorama = "^0.4.4"
 flake8 = "^4.0.1"
+pytest-cov = "^3.0.0"
 
 [tool.poetry.dev-dependencies]
 
