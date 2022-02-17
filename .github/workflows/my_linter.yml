@@ -1,0 +1,22 @@
+name: my_linter
+on: [push]
+jobs:
+  my-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Install dependencies and pytest
+        run: |
+          pip install poetry
+          make install
+          poetry add pytest
+      - name: Run linter
+        run: |
+          make lint
+      - name: Coverage-report
+        uses: paambaati/codeclimate-action@v2.7.5
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          coverageCommand: make coverage
