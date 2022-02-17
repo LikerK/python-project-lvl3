@@ -2,7 +2,7 @@ import os
 import requests_mock
 import pytest
 from page_loader.loader import downloads
-from page_loader.name_formation import get_name_html
+from page_loader.name_formation import get_name
 
 
 @pytest.mark.parametrize('url, result', [
@@ -10,7 +10,7 @@ from page_loader.name_formation import get_name_html
     ('https://cdn2.hexlet.io/courses', 'cdn2-hexlet-io-courses.html'),
 ])
 def test_name(url, result):
-    assert get_name_html(url) == result
+    assert get_name(url, 'html') == result
 
 
 def test_dowloads(tmp_path):
