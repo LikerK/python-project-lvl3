@@ -1,18 +1,15 @@
 import re
+from pathlib import Path
 
 
-def directory(url):
-    url_without_schema = re.sub(r"https://|http://", '', url)
-    name_directory = re.sub(r"[_\W]", '-', url_without_schema)
-    return f'{name_directory}_files'
-
-
-def html(url):
-    url_without_schema = re.sub(r"https://|http://", '', url)
-    name_file = re.sub(r"[_\W]", '-', url_without_schema)
-    return f'{name_file}.html'
-
-
-def image(url):
-    name_image = re.sub(r"\/", '-', url)
-    return name_image
+def get_name(url, format):
+    url = re.sub(r"https://|http://", '', url)
+    if format == 'html':
+        suffix = '.html'
+    elif format == 'directory':
+        suffix = '_files'
+    else:
+        suffix = Path(url).suffix
+        url = url.replace(suffix, '')
+    name_file = re.sub(r"[_\W]", '-', url)
+    return name_file + suffix

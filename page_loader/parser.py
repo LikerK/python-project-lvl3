@@ -7,7 +7,7 @@ def parse():
     # position arguments
     parser.add_argument('url')
 
-    #option arguments
+    # option arguments
     parser.add_argument('-o', '--output',
                         default='')
     args = parser.parse_args()
