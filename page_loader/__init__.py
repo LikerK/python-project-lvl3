@@ -5,7 +5,7 @@ import sys
 
 def init_logger():
     logger = logging.getLogger('page_loader')
-    format = '%(asctime)s || %(name)s || %(levelname)s || %(message)s'
+    format = '| %(name)s | %(levelname)s | %(message)s'
     logger.setLevel(logging.DEBUG)
     sh = logging.StreamHandler(stream=sys.stderr)
     sh.setFormatter(logging.Formatter(format))

@@ -55,7 +55,10 @@ def make_directory(path, url):
     try:
         os.mkdir(path_to_directory)
     except FileExistsError:
-        logger.warning(f"Directory '{path_to_directory}' is exists")
+        logger.warning('Directory already exists')
+    except FileNotFoundError:
+        logger.critical(f"Directory not found '{path}'")
+        raise FileNotFoundError(f'The directory "{path}" does not exist')
     except OSError as error:
         logger.warning(f"Can't create directory. {error}")
     return directory_name, path_to_directory
@@ -68,10 +71,5 @@ def save_file(path, content, format):
     except PermissionError:
         logger.critical(f"No right save into directory '{path}'")
         raise PermissionError(f'No access to save to "{path}"')
-    except FileNotFoundError:
-        logger.critical(f"Directory not found '{path}'")
-        raise FileNotFoundError(f'The directory "{path}" does not exist')
-    except FileExistsError:
-        logger.warning('Directory already exists')
     except OSError as error:
         logger.warning(f'Unknown error: {error}')
