@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from page_loader.parser import parse
-from page_loader.loader import downloads
+from page_loader.loader import download
 import logging
 import sys
 
@@ -13,7 +13,7 @@ def main():
     args = parse()
     n = 0
     try:
-        result = downloads(args.url, args.output)
+        result = download(args.url, args.output)
     except Exception as error:
         print(f'Unable to upload {args.url}')
         print(f'During execution the following error occurs: {error}')

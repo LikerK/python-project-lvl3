@@ -17,7 +17,7 @@ class My_bar(Bar):
     fill = '█'
 
 
-def downloads(url, path=os.getcwd()):
+def download(url, path=os.getcwd()):
     content = get_data_from_url(url)
     file_name = get_name(url, 'html')
     path_to_file = os.path.join(path, file_name)
