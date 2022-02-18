@@ -13,5 +13,5 @@ def init_logger():
     logger.addHandler(sh)
 
 
-__all__ = ('downloads', 'init_logger')
+__all__ = ('download', 'init_logger')
 init_logger()
