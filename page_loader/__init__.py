@@ -1,4 +1,4 @@
-from page_loader.loader import downloads
+from page_loader.loader import download
 import logging
 import sys
 
