@@ -26,6 +26,8 @@ class Page(BeautifulSoup):
         for tag in self.find_all():
             if tag.name in self.TAGS_FOR_LINKS:
                 attr = tag.get(self.TAGS_FOR_LINKS[tag.name])
+                if not attr:
+                    continue
                 if self._is_link_to_local_file(attr):
                     domain_link = urljoin(self.url, attr)
                     previous_items = old_links.setdefault(domain_link, [])
