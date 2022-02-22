@@ -1,6 +1,5 @@
-try:
-    a = ['asf']['asf']
-except:
-    raise TypeError
+from pathlib import Path
 
-print(12)
+a = 'https://python.org/about'
+
+print(not Path(a).suffix)

@@ -4,7 +4,7 @@ from pathlib import Path
 
 def get_name(url, format):
     url = re.sub(r"https://|http://", '', url)
-    if format == 'html':
+    if format == 'html' or not Path(url).suffix:
         suffix = '.html'
     elif format == 'directory':
         suffix = '_files'

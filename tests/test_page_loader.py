@@ -36,6 +36,8 @@ def test_dowloads(tmp_path):
         with open(path_to_html) as html_file:
             with open('tests/fixtures/index_result.html') as html_file_result:
                 assert html_file.read() == html_file_result.read()
+        path = os.path.join(tmp_path, 'test-dowloads-files-com_files')
+        assert len(os.listdir(path)) == 3
 
 
 @pytest.mark.parametrize('code', [404, 500])
