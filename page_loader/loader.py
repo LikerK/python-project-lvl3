@@ -2,7 +2,7 @@ import os
 import logging
 from progress.bar import Bar
 from colorama import Fore
-from page_loader.data_from_url import get_data_from_url
+from page_loader.data_from_url import download_html, download_file
 from page_loader.name_formation import get_name
 from page_loader.page import Page
 
@@ -18,17 +18,15 @@ class My_bar(Bar):
 
 
 def download(url, path=os.getcwd()):
-    content = get_data_from_url(url)
-    file_name = get_name(url, 'html')
-    path_to_file = os.path.join(path, file_name)
+    path_to_html, response = download_html(url, path)
     directory_name, path_to_directory = make_directory(path, url)
-    page_structure = Page(url, content)
+    page_structure = Page(url, response)
     domain_links = page_structure.get_domain_links
     replacements = download_files(
         domain_links, path_to_directory, directory_name)
     page_structure.replace_links(replacements)
-    save_file(path_to_file, page_structure.html, 'w')
-    return path_to_file
+    save_file(path_to_html, page_structure.html, 'w')
+    return path_to_html
 
 
 def download_files(domain_links, path_to_directory, directory_name):
@@ -36,7 +34,7 @@ def download_files(domain_links, path_to_directory, directory_name):
     replacements = dict()
     for link in domain_links:
         name_file = get_name(link, 'file')
-        file_content = get_data_from_url(link, option='content')
+        file_content = download_file(link)
         new_value = os.path.join(directory_name, name_file)
         full_path_to_file = os.path.join(path_to_directory, name_file)
         save_file(full_path_to_file, file_content, 'wb')

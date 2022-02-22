@@ -1,4 +1,6 @@
 import os
+from urllib.parse import urljoin
+from tempfile import TemporaryDirectory
 import requests_mock
 import pytest
 from page_loader.loader import download
@@ -34,3 +36,13 @@ def test_dowloads(tmp_path):
         with open(path_to_html) as html_file:
             with open('tests/fixtures/index_result.html') as html_file_result:
                 assert html_file.read() == html_file_result.read()
+
+
+@pytest.mark.parametrize('code', [404, 500])
+def test_response_with_error(requests_mock, code):
+    url = urljoin("https://ru.hexlet.io/courses", str(code))
+    requests_mock.get(url, status_code=code)
+
+    with TemporaryDirectory() as tmpdirname:
+        with pytest.raises(Exception):
+            assert download(url, tmpdirname)

@@ -9,10 +9,10 @@ logger = logging.getLogger(__name__)
 class Page(BeautifulSoup):
     TAGS_FOR_LINKS = {'img': 'src', 'link': 'href', 'script': 'src'}
 
-    def __init__(self, url, html):
+    def __init__(self, url, content):
         self.url = url
         self.parsed = urlparse(self.url)
-        super().__init__(html, "html.parser")
+        super().__init__(content, "html.parser")
         self.local_links_url = self._get_links_to_local_files()
 
     def _is_link_to_local_file(self, path):
