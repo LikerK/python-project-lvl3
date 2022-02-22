@@ -59,6 +59,7 @@ def make_directory(path, url):
         raise FileNotFoundError(f'The directory "{path}" does not exist')
     except OSError as error:
         logger.warning(f"Can't create directory. {error}")
+        raise OSError(error)
     return directory_name, path_to_directory
 
 
