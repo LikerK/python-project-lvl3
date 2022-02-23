@@ -17,7 +17,7 @@ class Page(BeautifulSoup):
 
     def _is_link_to_local_file(self, path):
         url = urlparse(path)
-        if url.scheme != '' or url.netloc != '':
+        if url.scheme and url.netloc != self.parsed.netloc:
             return False
         return True
 
