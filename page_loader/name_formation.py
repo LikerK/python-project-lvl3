@@ -9,9 +9,9 @@ logger = logging.getLogger(__name__)
 def get_name(url, format):
     url = re.sub(r"https://|http://", '', url)
     if format == 'directory':
-        suffix = '.html'
-    elif format == 'html' or not Path(url).suffix:
         suffix = '_files'
+    elif format == 'html' or not Path(url).suffix:
+        suffix = '.html'
     else:
         suffix = Path(url).suffix
         url = url.replace(suffix, '')
