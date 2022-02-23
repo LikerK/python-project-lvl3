@@ -37,6 +37,7 @@ def download_files(domain_links, path_to_directory, directory_name):
         file_content = download_file(link)
         new_value = os.path.join(directory_name, name_file)
         full_path_to_file = os.path.join(path_to_directory, name_file)
+        logger.debug(f'file will be saved in {full_path_to_file}')
         save_file(full_path_to_file, file_content, 'wb')
         replacements[link] = new_value
         spinner.next()
