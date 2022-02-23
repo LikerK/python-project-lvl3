@@ -30,6 +30,7 @@ class Page(BeautifulSoup):
                     continue
                 if self._is_link_to_local_file(attr):
                     domain_link = urljoin(self.url, attr)
+                    logger.debug(f'get domain link from {attr}')
                     previous_items = old_links.setdefault(domain_link, [])
                     previous_items.append(tag)
                     old_links[domain_link] = previous_items
