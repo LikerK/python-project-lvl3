@@ -26,16 +26,19 @@ def test_dowloads(tmp_path):
         mocker.get('https://test-dowloads.files.com', text=html_code)
         mocker.get('https://test-dowloads.files.com/img/01.png')
         mocker.get('https://test-dowloads.files.com/style.css', text=css_code)
-        mocker.get('https://test-dowloads.files.com/assert/scripts.js', text=js_code) # noqa: E501
+        mocker.get('https://test-dowloads.files.com/assert/scripts.js', text=js_code)  # noqa: E501
         path_to_html = download('https://test-dowloads.files.com', tmp_path)
-        # path_to_css = os.path.join(tmp_dir_name, 'test-dowloads-files-com_files/style.css')  # noqa: E501
+        path_to_css = os.path.join(tmp_path, 'test-dowloads-files-com_files/test-dowloads-files-com-style.css')  # noqa: E501
         path_to_js = os.path.join(tmp_path, 'test-dowloads-files-com_files/test-dowloads-files-com-assert-scripts.js')  # noqa: E501
         with open('tests/fixtures/scripts.js') as script:
-            with open(path_to_js) as test:
-                assert script.read() == test.read()
+            with open(path_to_js) as result_js:
+                assert script.read() == result_js.read()
         with open(path_to_html) as html_file:
             with open('tests/fixtures/index_result.html') as html_file_result:
                 assert html_file.read() == html_file_result.read()
+        with open('tests/fixtures/style.css') as css_file:
+            with open(path_to_css) as result_css:
+                assert css_file.read() == result_css.read()
         path = os.path.join(tmp_path, 'test-dowloads-files-com_files')
         assert len(os.listdir(path)) == 3
 
