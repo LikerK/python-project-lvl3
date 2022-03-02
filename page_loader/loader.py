@@ -3,7 +3,7 @@ import logging
 from progress.bar import Bar
 from colorama import Fore
 from page_loader.data_from_url import download_html, download_file
-from page_loader.name_formation import get_name
+from page_loader.name_formation import get_name_directory, get_name_file
 from page_loader.page import Page
 
 
@@ -21,7 +21,7 @@ def download(url, path=os.getcwd()):
     path_to_html, response = download_html(url, path)
     directory_name, path_to_directory = make_directory(path, url)
     page_structure = Page(url, response)
-    domain_links = page_structure.get_domain_links
+    domain_links = page_structure.domain_links
     replacements = download_files(
         domain_links, path_to_directory, directory_name)
     page_structure.replace_links(replacements)
@@ -33,7 +33,7 @@ def download_files(domain_links, path_to_directory, directory_name):
     spinner = My_bar(max=len(domain_links), message='Downloads files: ')
     replacements = dict()
     for link in domain_links:
-        name_file = get_name(link, 'file')
+        name_file = get_name_file(link)
         file_content = download_file(link)
         new_value = os.path.join(directory_name, name_file)
         full_path_to_file = os.path.join(path_to_directory, name_file)
@@ -49,7 +49,7 @@ def download_files(domain_links, path_to_directory, directory_name):
 
 
 def make_directory(path, url):
-    directory_name = get_name(url, 'directory')
+    directory_name = get_name_directory(url)
     path_to_directory = os.path.join(path, directory_name)
     try:
         os.mkdir(path_to_directory)

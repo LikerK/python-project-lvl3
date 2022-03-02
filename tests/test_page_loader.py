@@ -4,7 +4,22 @@ from tempfile import TemporaryDirectory
 import requests_mock
 import pytest
 from page_loader.loader import download
-from page_loader.name_formation import get_name
+from page_loader.name_formation import get_name_html
+
+URL = 'https://test-dowloads.files.com'
+URL_IMAGE = 'https://test-dowloads.files.com/img/hexlet.png'
+URL_CSS = 'https://test-dowloads.files.com/style.css'
+URL_JS = 'https://test-dowloads.files.com/assert/scripts.js'
+
+HTML = 'tests/fixtures/index.html'
+JS = 'tests/fixtures/scripts.js'
+CSS = 'tests/fixtures/style.css'
+IMAGE = 'tests/fixtures/hexlet.png'
+HTML_RESULT = 'tests/fixtures/style.css'
+PATH_TO_CSS = 'test-dowloads-files-com_files/test-dowloads-files-com-style.css'
+PATH_TO_JS = 'test-dowloads-files-com_files/test-dowloads-files-com-assert-scripts.js'  # noqa: E501
+PATH_TO_IMG = 'test-dowloads-files-com_files/test-dowloads-files-com-img-hexlet.png'  # noqa: E501
+NAME_DIRECTORY = 'test-dowloads-files-com_files'
 
 
 @pytest.mark.parametrize('url, result', [
@@ -12,38 +27,43 @@ from page_loader.name_formation import get_name
     ('https://cdn2.hexlet.io/courses', 'cdn2-hexlet-io-courses.html'),
 ])
 def test_name(url, result):
-    assert get_name(url, 'html') == result
+    assert get_name_html(url) == result
 
 
 def test_dowloads(tmp_path):
-    with open('tests/fixtures/index.html') as html_file:
-        html_code = html_file.read()
-    with open('tests/fixtures/scripts.js') as js_file:
-        js_code = js_file.read()
-    with open('tests/fixtures/style.css') as css_file:
-        css_code = css_file.read()
+    html_code = get_content(HTML)
+    css_code = get_content(CSS)
+    js_code = get_content(JS)
+    image = get_content(IMAGE, 'rb')
     with requests_mock.mock() as mocker:
-        mocker.get('https://test-dowloads.files.com', text=html_code)
-        mocker.get('https://test-dowloads.files.com/img/01.png')
-        mocker.get('https://test-dowloads.files.com/style.css', text=css_code)
-        mocker.get('https://test-dowloads.files.com/assert/scripts.js', text=js_code)  # noqa: E501
-        path_to_html = download('https://test-dowloads.files.com', tmp_path)
-        path_to_css = os.path.join(tmp_path, 'test-dowloads-files-com_files/test-dowloads-files-com-style.css')  # noqa: E501
-        path_to_js = os.path.join(tmp_path, 'test-dowloads-files-com_files/test-dowloads-files-com-assert-scripts.js')  # noqa: E501
-        with open('tests/fixtures/scripts.js') as script:
-            with open(path_to_js) as result_js:
-                assert script.read() == result_js.read()
-        with open(path_to_html) as html_file:
-            with open('tests/fixtures/index_result.html') as html_file_result:
-                assert html_file.read() == html_file_result.read()
-        with open('tests/fixtures/style.css') as css_file:
-            with open(path_to_css) as result_css:
-                assert css_file.read() == result_css.read()
-        path = os.path.join(tmp_path, 'test-dowloads-files-com_files')
+        mocker.get(URL, text=html_code)
+        mocker.get(URL_IMAGE, content=image)
+        mocker.get(URL_CSS, text=css_code)
+        mocker.get(URL_JS, text=js_code)
+        download(URL, tmp_path)
+        path_to_css = os.path.join(tmp_path, PATH_TO_CSS)
+        path_to_js = os.path.join(tmp_path, PATH_TO_JS)
+        path_to_img = os.path.join(tmp_path, PATH_TO_IMG)
+
+        result_css = get_content(path_to_css)
+        assert result_css == css_code
+
+        result_js = get_content(path_to_js)
+        assert result_js == js_code
+
+        result_img = get_content(path_to_img, 'rb')
+        assert result_img == image
+
+        path = os.path.join(tmp_path, NAME_DIRECTORY)
         assert len(os.listdir(path)) == 3
 
 
-@pytest.mark.parametrize('code', [404, 500])
+def get_content(file, format='r'):
+    with open(file, format) as file:
+        return file.read()
+
+
+@pytest.mark.parametrize('code', [404, 500, 504])
 def test_response_with_error(requests_mock, code):
     url = urljoin("https://ru.hexlet.io/courses", str(code))
     requests_mock.get(url, status_code=code)

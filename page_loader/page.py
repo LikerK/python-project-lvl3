@@ -36,7 +36,7 @@ class Page(BeautifulSoup):
         return old_links
 
     @property
-    def get_domain_links(self):
+    def domain_links(self):
         return self.local_links_url.keys()
 
     def replace_links(self, new_links):

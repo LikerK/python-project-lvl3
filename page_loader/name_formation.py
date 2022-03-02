@@ -6,15 +6,32 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def get_name(url, format):
-    url = re.sub(r"https://|http://", '', url)
-    if format == 'directory':
-        suffix = '_files'
-    elif format == 'html' or not Path(url).suffix:
+def get_name(func):
+    def wrapper(url):
+        url = re.sub(r"https://|http://", '', url)
+        url, suffix = func(url)
+        name_file = re.sub(r"[_\W]", '-', url)
+        return name_file + suffix
+    return wrapper
+
+
+@get_name
+def get_name_directory(url):
+    suffix = '_files'
+    return url, suffix
+
+
+@get_name
+def get_name_html(url):
+    suffix = '.html'
+    return url, suffix
+
+
+@get_name
+def get_name_file(url):
+    if not Path(url).suffix:
         suffix = '.html'
     else:
         suffix = Path(url).suffix
         url = url.replace(suffix, '')
-    name_file = re.sub(r"[_\W]", '-', url)
-    logging.debug(f'for {url} get name {name_file + suffix}')
-    return name_file + suffix
+    return url, suffix

@@ -1,6 +1,6 @@
 import requests
 import logging
-from page_loader.name_formation import get_name
+from page_loader.name_formation import get_name_html
 import os
 
 
@@ -14,7 +14,7 @@ def download_html(url, path):
     except requests.exceptions.RequestException as error:
         logger.warning(f'{error} Status code: {requests.get(url).status_code}')
         raise Exception(f'Status code {error}') from error
-    html_name = get_name(url, 'html')
+    html_name = get_name_html(url)
     path_to_file = os.path.join(path, html_name)
     return path_to_file, response.text
 
