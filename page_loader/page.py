@@ -50,4 +50,4 @@ class Page(BeautifulSoup):
 
     @property
     def html(self):
-        return self.prettify()
+        return self.prettify('utf-8')

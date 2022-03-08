@@ -1,10 +1,11 @@
 import os
-from urllib.parse import urljoin
+import stat
 from tempfile import TemporaryDirectory
+from requests.exceptions import Timeout, ConnectionError, HTTPError
 import requests_mock
 import pytest
 from page_loader.loader import download
-from page_loader.name_formation import get_name_html
+from page_loader.name_formation import get_html_name
 
 URL = 'https://test-dowloads.files.com'
 URL_IMAGE = 'https://test-dowloads.files.com/img/hexlet.png'
@@ -27,14 +28,14 @@ NAME_DIRECTORY = 'test-dowloads-files-com_files'
     ('https://cdn2.hexlet.io/courses', 'cdn2-hexlet-io-courses.html'),
 ])
 def test_name(url, result):
-    assert get_name_html(url) == result
+    assert get_html_name(url) == result
 
 
 def test_dowloads(tmp_path):
-    html_code = get_content(HTML)
-    css_code = get_content(CSS)
-    js_code = get_content(JS)
-    image = get_content(IMAGE, 'rb')
+    html_code = get_content(HTML).decode()
+    css_code = get_content(CSS).decode()
+    js_code = get_content(JS).decode()
+    image = get_content(IMAGE)
     with requests_mock.mock() as mocker:
         mocker.get(URL, text=html_code)
         mocker.get(URL_IMAGE, content=image)
@@ -45,29 +46,35 @@ def test_dowloads(tmp_path):
         path_to_js = os.path.join(tmp_path, PATH_TO_JS)
         path_to_img = os.path.join(tmp_path, PATH_TO_IMG)
 
-        result_css = get_content(path_to_css)
+        result_css = get_content(path_to_css).decode()
         assert result_css == css_code
 
-        result_js = get_content(path_to_js)
+        result_js = get_content(path_to_js).decode()
         assert result_js == js_code
 
-        result_img = get_content(path_to_img, 'rb')
+        result_img = get_content(path_to_img)
         assert result_img == image
 
         path = os.path.join(tmp_path, NAME_DIRECTORY)
         assert len(os.listdir(path)) == 3
 
 
-def get_content(file, format='r'):
-    with open(file, format) as file:
+def get_content(file):
+    with open(file, 'rb') as file:
         return file.read()
 
 
-@pytest.mark.parametrize('code', [404, 500, 504])
-def test_response_with_error(requests_mock, code):
-    url = urljoin("https://ru.hexlet.io/courses", str(code))
-    requests_mock.get(url, status_code=code)
-
+@pytest.mark.parametrize('exc', [
+    Timeout, ConnectionError, HTTPError])
+def test_response_with_error(requests_mock, exc):
+    requests_mock.get(URL, exc=exc)
     with TemporaryDirectory() as tmpdirname:
         with pytest.raises(Exception):
-            assert download(url, tmpdirname)
+            assert download(URL, tmpdirname)
+
+
+def test_permissions_error_to_write(requests_mock, tmp_path):
+    requests_mock.get(URL)
+    os.chmod(tmp_path, stat.S_IRUSR)
+    with pytest.raises(PermissionError) as error:
+        assert download(URL, tmp_path) == error
