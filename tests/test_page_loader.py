@@ -1,5 +1,6 @@
 import os
 import stat
+from bs4 import BeautifulSoup
 from tempfile import TemporaryDirectory
 from requests.exceptions import Timeout, ConnectionError, HTTPError
 import requests_mock
@@ -16,7 +17,8 @@ HTML = 'tests/fixtures/index.html'
 JS = 'tests/fixtures/scripts.js'
 CSS = 'tests/fixtures/style.css'
 IMAGE = 'tests/fixtures/hexlet.png'
-HTML_RESULT = 'tests/fixtures/style.css'
+HTML_RESULT = 'tests/fixtures/index_result.html'
+HTML_NAME = 'test-dowloads-files-com.html'
 PATH_TO_CSS = 'test-dowloads-files-com_files/test-dowloads-files-com-style.css'
 PATH_TO_JS = 'test-dowloads-files-com_files/test-dowloads-files-com-assert-scripts.js'  # noqa: E501
 PATH_TO_IMG = 'test-dowloads-files-com_files/test-dowloads-files-com-img-hexlet.png'  # noqa: E501
@@ -33,6 +35,8 @@ def test_name(url, result):
 
 def test_dowloads(tmp_path):
     html_code = get_content(HTML).decode()
+    with open(HTML_RESULT, 'rb') as file:
+        html_result = file.read()
     css_code = get_content(CSS).decode()
     js_code = get_content(JS).decode()
     image = get_content(IMAGE)
@@ -42,9 +46,13 @@ def test_dowloads(tmp_path):
         mocker.get(URL_CSS, text=css_code)
         mocker.get(URL_JS, text=js_code)
         download(URL, tmp_path)
+        path_to_html = os.path.join(tmp_path, HTML_NAME)
         path_to_css = os.path.join(tmp_path, PATH_TO_CSS)
         path_to_js = os.path.join(tmp_path, PATH_TO_JS)
         path_to_img = os.path.join(tmp_path, PATH_TO_IMG)
+
+        result_html = get_content(path_to_html).decode()
+        assert result_html == html_result
 
         result_css = get_content(path_to_css).decode()
         assert result_css == css_code

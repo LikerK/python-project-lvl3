@@ -1,4 +1,5 @@
 import argparse
+import os
 
 
 def parse():
@@ -9,6 +10,6 @@ def parse():
 
     # option arguments
     parser.add_argument('-o', '--output',
-                        default='')
+                        default=os.getcwd())
     args = parser.parse_args()
     return args

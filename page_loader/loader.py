@@ -10,7 +10,7 @@ from page_loader.page import Page
 logger = logging.getLogger(__name__)
 
 
-class My_bar(Bar):
+class ProgressDownload(Bar):
     bar_prefix = ' '
     bar_suffix = ' '
     empty_fill = '.'
@@ -25,22 +25,21 @@ def download(url, path=os.getcwd()):
     page_structure = Page(url, response)
     domain_links = page_structure.domain_links
 
-    spinner = My_bar(max=len(domain_links), message='Downloads files: ')
+    spinner = ProgressDownload(max=len(domain_links), message='Downloads files: ')
     replacements = dict()
-    for link in domain_links:
-        name_file = get_file_name(link)
-        file_content = download_file(link)
-        new_value = os.path.join(directory_name, name_file)
-        full_path_to_file = os.path.join(path_to_directory, name_file)
-        logger.debug(f'file will be saved in {full_path_to_file}')
-        save_file(full_path_to_file, file_content)
-        replacements[link] = new_value
+    if len(domain_links) > 0:   
+        for link in domain_links:  
+            name_local_file = get_file_name(link)
+            content_local_file = download_file(link)
+            path_to_local_file = os.path.join(directory_name, name_local_file)
+            full_path_to_file = os.path.join(path_to_directory, name_local_file)
+            logger.debug(f'file will be saved in {full_path_to_file}')
+            save_file(full_path_to_file, content_local_file)
+            replacements[link] = path_to_local_file
         spinner.next()
-    if len(domain_links) > 0:
         print(Fore.GREEN + ' √' + Fore.RESET)
     else:
         print('No download links found')
-
     page_structure.replace_links(replacements)
     save_file(path_to_html, page_structure.html)
     return path_to_html
@@ -60,7 +59,7 @@ def make_directory(path, url):
         logger.critical(f"No right save into directory '{path}'")
         raise PermissionError(f'No access to save to "{path}"')
     except OSError as error:
-        logger.warning(f"Can't create directory. {error}")
+        logger.critical(f"Can't create directory. {error}")
         raise OSError(error)
     return directory_name, path_to_directory
 
@@ -73,4 +72,5 @@ def save_file(path, content):
         logger.critical(f"No right save into directory '{path}'")
         raise PermissionError(f'No access to save to "{path}"')
     except OSError as error:
-        logger.warning(f'Unknown error: {error}')
+        logger.critical(f'Unknown error: {error}')
+        raise OSError(error)
