@@ -1,5 +1,6 @@
 import os
 import logging
+import requests
 from progress.bar import Bar
 from colorama import Fore
 from page_loader.data_from_url import download_file
@@ -28,14 +29,17 @@ def download(url, path=os.getcwd()):
     spinner = ProgressDownload(max=len(domain_links), message='Downloads files: ')
     replacements = dict()
     if len(domain_links) > 0:   
-        for link in domain_links:  
-            name_local_file = get_file_name(link)
-            content_local_file = download_file(link)
-            path_to_local_file = os.path.join(directory_name, name_local_file)
-            full_path_to_file = os.path.join(path_to_directory, name_local_file)
-            logger.debug(f'file will be saved in {full_path_to_file}')
-            save_file(full_path_to_file, content_local_file)
-            replacements[link] = path_to_local_file
+        for link in domain_links:
+            try: 
+                name_local_file = get_file_name(link)
+                content_local_file = download_file(link)
+                path_to_local_file = os.path.join(directory_name, name_local_file)
+                full_path_to_file = os.path.join(path_to_directory, name_local_file)
+                logger.debug(f'file will be saved in {full_path_to_file}')
+                save_file(full_path_to_file, content_local_file)
+                replacements[link] = path_to_local_file
+            except requests.exceptions.RequestException:
+                logger.warning(f'failed to download from link: {link}')
         spinner.next()
         print(Fore.GREEN + ' √' + Fore.RESET)
     else:

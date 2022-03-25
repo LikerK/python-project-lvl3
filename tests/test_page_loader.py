@@ -35,7 +35,7 @@ def test_name(url, result):
 
 def test_dowloads(tmp_path):
     html_code = get_content(HTML).decode()
-    with open(HTML_RESULT, 'rb') as file:
+    with open(HTML_RESULT, 'r') as file:
         html_result = file.read()
     css_code = get_content(CSS).decode()
     js_code = get_content(JS).decode()
