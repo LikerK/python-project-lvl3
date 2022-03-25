@@ -26,15 +26,18 @@ def download(url, path=os.getcwd()):
     page_structure = Page(url, response)
     domain_links = page_structure.domain_links
 
-    spinner = ProgressDownload(max=len(domain_links), message='Downloads files: ')
+    spinner = ProgressDownload(
+        max=len(domain_links), message='Downloads files: ')
     replacements = dict()
-    if len(domain_links) > 0:   
+    if len(domain_links) > 0:
         for link in domain_links:
-            try: 
+            try:
                 name_local_file = get_file_name(link)
                 content_local_file = download_file(link)
-                path_to_local_file = os.path.join(directory_name, name_local_file)
-                full_path_to_file = os.path.join(path_to_directory, name_local_file)
+                path_to_local_file = os.path.join(
+                    directory_name, name_local_file)
+                full_path_to_file = os.path.join(
+                    path_to_directory, name_local_file)
                 logger.debug(f'file will be saved in {full_path_to_file}')
                 save_file(full_path_to_file, content_local_file)
                 replacements[link] = path_to_local_file

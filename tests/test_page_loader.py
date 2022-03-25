@@ -1,6 +1,5 @@
 import os
 import stat
-from bs4 import BeautifulSoup
 from tempfile import TemporaryDirectory
 from requests.exceptions import Timeout, ConnectionError, HTTPError
 import requests_mock
